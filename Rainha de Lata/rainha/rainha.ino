@@ -3,14 +3,14 @@
 Servo meusOlhos; Servo minhasPalpebras; Servo meuBraco;
 
 const int pinoServoOlhos = 2;   const int pinoServoPalpebras = 3;   const int pinoBraco = 7;
-const int pinoSensor = 8;       // Pino do sensor HW-201
+const int pinoSensor = 8;       
 const int PUL1_DIR = 10;        const int DIR1_DIR = 11;
 const int PUL2_ESQ = 12;        const int DIR2_ESQ = 13;
 
 const int posicaoCentral = 90;  const int posicaoAberta = 70;
 const int posicaoBrava = 90;    const int posicaoFechada = 180;
 
-// AJUSTADO: 550Hz garante que o motor de passo tenha força mecânica para tirar o chassi do lugar devagar
+
 float freqHz = 800; 
 
 int anguloBraco = 110;
@@ -31,18 +31,15 @@ void setup() {
 void loop() {
   int estadoSensor = digitalRead(pinoSensor);
 
-  // Se o sinal for HIGH (Sem obstáculo / caminho livre), ela caça
   if (estadoSensor == HIGH) {
     interromperCaca = false; 
     
-    // EXATAMENTE ESSA PARTE QUE VOCÊ PRECISAVA: Liga as direções para andar!
     digitalWrite(DIR1_DIR, LOW);
     digitalWrite(DIR2_ESQ, HIGH);
     
     olhar_procurando_brava();
   } 
   else {
-    // Se houver obstáculo (LOW), para na mesma hora e entra em patrulha mansa
     parar_motores();
     meuBraco.write(110); 
     olhar_simples();
@@ -63,13 +60,13 @@ void esperar_e_mover(int tempoMs) {
       return; 
     }
 
-    // Onda quadrada para os drivers DM542
+
     digitalWrite(PUL1_DIR, HIGH); digitalWrite(PUL2_ESQ, HIGH);
     delayMicroseconds(meioPeriodo);
     digitalWrite(PUL1_DIR, LOW);  digitalWrite(PUL2_ESQ, LOW);
     delayMicroseconds(meioPeriodo);
 
-    // Balanço automático do braço
+
     if (millis() - ultimoMovimentoBraco >= 15) {
       ultimoMovimentoBraco = millis();
       anguloBraco += (direcaoBraco * 4); 
